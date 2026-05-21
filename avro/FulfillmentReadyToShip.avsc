@@ -1,0 +1,24 @@
+{
+  "type" : "record",
+  "name" : "FulfillmentReadyToShip",
+  "namespace" : "com.arcadiaeditions.fulfillment.shipping.events.avro",
+  "fields" : [ {
+    "name" : "fulfillmentId",
+    "type" : [ "null", "string" ]
+  }, {
+    "name" : "orderId",
+    "type" : [ "null", "string" ]
+  }, {
+    "name" : "customerId",
+    "type" : [ "null", "string" ]
+  }, {
+    "name" : "carrierCode",
+    "type" : [ "null", "string" ]
+  }, {
+    "name" : "trackingNumber",
+    "type" : [ "null", "string" ]
+  }, {
+    "name" : "readyAt",
+    "type" : [ "null", "string" ]
+  } ]
+}

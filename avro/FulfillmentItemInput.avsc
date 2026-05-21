@@ -1,0 +1,12 @@
+{
+  "type" : "record",
+  "name" : "FulfillmentItemInput",
+  "namespace" : "com.arcadiaeditions.fulfillment.shipping.events.avro",
+  "fields" : [ {
+    "name" : "sku",
+    "type" : "string"
+  }, {
+    "name" : "quantity",
+    "type" : "int"
+  } ]
+}

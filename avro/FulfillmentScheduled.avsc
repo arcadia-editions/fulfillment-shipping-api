@@ -1,0 +1,18 @@
+{
+  "type" : "record",
+  "name" : "FulfillmentScheduled",
+  "namespace" : "com.arcadiaeditions.fulfillment.shipping.events.avro",
+  "fields" : [ {
+    "name" : "fulfillmentId",
+    "type" : [ "null", "string" ]
+  }, {
+    "name" : "orderId",
+    "type" : [ "null", "string" ]
+  }, {
+    "name" : "customerId",
+    "type" : [ "null", "string" ]
+  }, {
+    "name" : "scheduledAt",
+    "type" : [ "null", "string" ]
+  } ]
+}

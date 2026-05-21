@@ -1,0 +1,105 @@
+config {
+    title "Arcadia Editions - Fulfillment Shipping"
+    basePackage "com.arcadiaeditions.fulfillment.shipping"
+    persistence jpa
+
+    plugins {
+        /** Generates an AsyncAPI v3 specification from this ZDL model. */
+        ZDLToAsyncAPIPlugin {
+            schemaFormat avro
+            idType integer
+            idTypeFormat int64
+            avroPackage com.arcadiaeditions.fulfillment.shipping.events.avro
+            includeCloudEventsHeaders true
+            includeKafkaCommonHeaders true
+            targetFile "./asyncapi.yml"
+        }
+        /** Generates an OpenAPI 3.0 specification from this ZDL model. */
+        ZDLToOpenAPIPlugin {
+            idType integer
+            idTypeFormat int64
+            targetFile "./openapi.yml"
+        }
+    }
+}
+
+@aggregate
+@lifecycle(field: status, initial: SCHEDULED)
+entity Fulfillment {
+    fulfillmentId String required unique
+    orderId String required unique
+    customerId String required
+    status FulfillmentStatus required
+    carrierCode String
+    trackingNumber String
+    scheduledAt Instant
+    readyAt Instant
+    failedAt Instant
+    failureReason String
+}
+
+enum FulfillmentStatus {
+    SCHEDULED
+    READY_TO_SHIP
+    FAILED
+}
+
+input ScheduleFulfillmentInput {
+    orderId String required
+    customerId String required
+    shippingAddress ShippingAddressInput required
+    items FulfillmentItemInput[] required
+}
+
+input ShippingAddressInput {
+    name String required
+    line1 String required
+    line2 String
+    city String required
+    region String
+    postalCode String required
+    country String required
+}
+
+input FulfillmentItemInput {
+    sku String required
+    quantity Integer required
+}
+
+@rest("/fulfillments")
+service FulfillmentShippingService for (Fulfillment) {
+
+    @asyncapi({ channel: "OrderConfirmedEventsChannel", topic: "orders-checkout.events.order-confirmed" })
+    @transition(to: SCHEDULED)
+    scheduleFulfillment(ScheduleFulfillmentInput) Fulfillment withEvents [FulfillmentScheduled | FulfillmentFailed]
+
+    @transition(from: SCHEDULED, to: READY_TO_SHIP)
+    markReadyToShip(id) Fulfillment withEvents FulfillmentReadyToShip
+}
+
+@asyncapi({ channel: "FulfillmentScheduledEventsChannel", topic: "fulfillment-shipping.events.fulfillment-scheduled" })
+event FulfillmentScheduled {
+    fulfillmentId String
+    orderId String
+    customerId String
+    scheduledAt Instant
+}
+
+@asyncapi({ channel: "FulfillmentFailedEventsChannel", topic: "fulfillment-shipping.events.fulfillment-failed" })
+event FulfillmentFailed {
+    fulfillmentId String
+    orderId String
+    customerId String
+    reason String
+    failedAt Instant
+}
+
+@asyncapi({ channel: "FulfillmentReadyToShipEventsChannel", topic: "fulfillment-shipping.events.fulfillment-ready-to-ship" })
+event FulfillmentReadyToShip {
+    fulfillmentId String
+    orderId String
+    customerId String
+    carrierCode String
+    trackingNumber String
+    readyAt Instant
+}

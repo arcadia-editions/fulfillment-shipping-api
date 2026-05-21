@@ -1,0 +1,21 @@
+{
+  "type" : "record",
+  "name" : "FulfillmentFailed",
+  "namespace" : "com.arcadiaeditions.fulfillment.shipping.events.avro",
+  "fields" : [ {
+    "name" : "fulfillmentId",
+    "type" : [ "null", "string" ]
+  }, {
+    "name" : "orderId",
+    "type" : [ "null", "string" ]
+  }, {
+    "name" : "customerId",
+    "type" : [ "null", "string" ]
+  }, {
+    "name" : "reason",
+    "type" : [ "null", "string" ]
+  }, {
+    "name" : "failedAt",
+    "type" : [ "null", "string" ]
+  } ]
+}
