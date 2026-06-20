@@ -1,5 +1,5 @@
 config {
-    id "urn:com.arcadiaeditions.fulfillment.shipping"
+    id "urn:com.arcadiaeditions:fulfillment:shipping"
     title "Arcadia Editions - Fulfillment Shipping"
     basePackage "com.arcadiaeditions.fulfillment.shipping"
     persistence jpa
@@ -7,6 +7,7 @@ config {
     plugins {
         /** Generates an AsyncAPI v3 specification from this ZDL model. */
         ZDLToAsyncAPIPlugin {
+            id "urn:com.arcadiaeditions:fulfillment:shipping:asyncapi"
             schemaFormat avro
             idType integer
             idTypeFormat int64
@@ -16,7 +17,7 @@ config {
             targetFile "./asyncapi.yml"
         }
         ZDLToAsyncAPIClientPlugin {
-            id "urn:com.arcadiaeditions.fulfillment.shipping:client"
+            id "urn:com.arcadiaeditions:fulfillment:shipping:asyncapi:client"
             title "Arcadia Editions - Fulfillment Shipping - AsyncAPI Client"
             targetFile "./asyncapi-client.yml"
         }
@@ -79,7 +80,7 @@ input FulfillmentItemInput {
 @rest("/fulfillments")
 service FulfillmentShippingService for (Fulfillment) {
 
-    @asyncapi(api: OrdersCheckoutApi, channel: OrderConfirmedChannel)
+    @asyncapi(api: OrdersCheckoutApi, channel: "order-confirmed-event-v1")
     @transition(to: SCHEDULED)
     scheduleFulfillment(ScheduleFulfillmentInput) Fulfillment withEvents [FulfillmentScheduled | FulfillmentFailed]
 
@@ -87,7 +88,7 @@ service FulfillmentShippingService for (Fulfillment) {
     markReadyToShip(id) Fulfillment withEvents FulfillmentReadyToShip
 }
 
-@asyncapi({ channel: "FulfillmentScheduledChannel", topic: "fulfillment-shipping.events.fulfillment-scheduled" })
+@asyncapi({ channel: "fulfillment-scheduled-event-v1", topic: "fulfillment-shipping.fulfillment-scheduled.event.avro.v1" })
 event FulfillmentScheduled {
     fulfillmentId String
     orderId String
@@ -95,7 +96,7 @@ event FulfillmentScheduled {
     scheduledAt Instant
 }
 
-@asyncapi({ channel: "FulfillmentFailedChannel", topic: "fulfillment-shipping.events.fulfillment-failed" })
+@asyncapi({ channel: "fulfillment-failed-event-v1", topic: "fulfillment-shipping.fulfillment-failed.event.avro.v1" })
 event FulfillmentFailed {
     fulfillmentId String
     orderId String
@@ -104,7 +105,7 @@ event FulfillmentFailed {
     failedAt Instant
 }
 
-@asyncapi({ channel: "FulfillmentReadyToShipChannel", topic: "fulfillment-shipping.events.fulfillment-ready-to-ship" })
+@asyncapi({ channel: "fulfillment-ready-to-ship-event-v1", topic: "fulfillment-shipping.fulfillment-ready-to-ship.event.avro.v1" })
 event FulfillmentReadyToShip {
     fulfillmentId String
     orderId String

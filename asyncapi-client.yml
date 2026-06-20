@@ -1,0 +1,21 @@
+asyncapi: 3.0.0
+id: urn:com.arcadiaeditions:fulfillment:shipping:asyncapi:client
+info:
+  title: "Arcadia Editions - Fulfillment Shipping - AsyncAPI Client"
+  version: 1.0.0
+  description: "Consumed AsyncAPI channels for Arcadia Editions - Fulfillment Shipping."
+
+channels:
+
+  order-confirmed-event-v1:
+    $ref: 'https://raw.githubusercontent.com/arcadia-editions/orders-checkout-api/main/asyncapi.yml#/channels/order-confirmed-event-v1'
+
+
+
+operations:
+
+  onOrderConfirmedEventV1:
+    action: receive
+    channel:
+      $ref: '#/channels/order-confirmed-event-v1'
+

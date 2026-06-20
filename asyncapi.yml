@@ -1,4 +1,5 @@
 asyncapi: 3.0.0
+id: urn:com.arcadiaeditions:fulfillment:shipping:asyncapi
 info:
   title: "Arcadia Editions - Fulfillment Shipping"
   version: 0.0.1
@@ -9,66 +10,45 @@ info:
 defaultContentType: application/json
 
 channels:
-  OrderConfirmedEventsChannel:
-    address: "orders-checkout.events.order-confirmed"
-    messages:
-      ScheduleFulfillmentInputMessage:
-        $ref: '#/components/messages/ScheduleFulfillmentInputMessage'
-  FulfillmentScheduledEventsChannel:
-    address: "fulfillment-shipping.events.fulfillment-scheduled"
+  fulfillment-scheduled-event-v1:
+    address: "fulfillment-shipping.fulfillment-scheduled.event.avro.v1"
     messages:
       FulfillmentScheduledMessage:
         $ref: '#/components/messages/FulfillmentScheduledMessage'
-  FulfillmentFailedEventsChannel:
-    address: "fulfillment-shipping.events.fulfillment-failed"
+  fulfillment-failed-event-v1:
+    address: "fulfillment-shipping.fulfillment-failed.event.avro.v1"
     messages:
       FulfillmentFailedMessage:
         $ref: '#/components/messages/FulfillmentFailedMessage'
-  FulfillmentReadyToShipEventsChannel:
-    address: "fulfillment-shipping.events.fulfillment-ready-to-ship"
+  fulfillment-ready-to-ship-event-v1:
+    address: "fulfillment-shipping.fulfillment-ready-to-ship.event.avro.v1"
     messages:
       FulfillmentReadyToShipMessage:
         $ref: '#/components/messages/FulfillmentReadyToShipMessage'
 
 operations:
-  doScheduleFulfillment:
-    action: receive
-    tags:
-      - name: FulfillmentShipping
-    channel:
-      $ref: '#/channels/OrderConfirmedEventsChannel'
   onFulfillmentScheduled:
     action: send
     tags:
       - name: FulfillmentShipping
     channel:
-      $ref: '#/channels/FulfillmentScheduledEventsChannel'
+      $ref: '#/channels/fulfillment-scheduled-event-v1'
   onFulfillmentFailed:
     action: send
     tags:
       - name: FulfillmentShipping
     channel:
-      $ref: '#/channels/FulfillmentFailedEventsChannel'
+      $ref: '#/channels/fulfillment-failed-event-v1'
   onFulfillmentReadyToShip:
     action: send
     tags:
       - name: FulfillmentShipping
     channel:
-      $ref: '#/channels/FulfillmentReadyToShipEventsChannel'
+      $ref: '#/channels/fulfillment-ready-to-ship-event-v1'
 
 
 components:
   messages:
-    ScheduleFulfillmentInputMessage:
-      name: ScheduleFulfillmentInputMessage
-      title: ""
-      summary: ""
-      traits:
-        - $ref: '#/components/messageTraits/CommonHeaders'
-      payload:
-        schemaFormat: application/vnd.apache.avro+json;version=1.9.0
-        schema:
-          $ref: "avro/ScheduleFulfillmentInput.avsc"
     FulfillmentScheduledMessage:
       name: FulfillmentScheduledMessage
       title: ""
@@ -131,5 +111,4 @@ components:
             type: string
             description: Timestamp of when the event happened
             x-runtime-expression: $message.payload#{T(java.time.Instant).now().toString()}
-
 
