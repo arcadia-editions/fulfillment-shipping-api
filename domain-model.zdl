@@ -8,17 +8,31 @@ config {
         /** Generates an AsyncAPI v3 specification from this ZDL model. */
         ZDLToAsyncAPIPlugin {
             id "urn:com.arcadiaeditions:fulfillment:shipping:asyncapi"
+            applicationExtensions """
+            x-application-bindings:
+              x-principal: fulfillment_shipping
+              x-clientId: fulfillment_shipping
+              x-groupId: fulfillment_shipping
+            """
             schemaFormat avro
             idType integer
             idTypeFormat int64
             avroPackage com.arcadiaeditions.fulfillment.shipping.events.avro
             includeCloudEventsHeaders true
             includeKafkaCommonHeaders true
+            asyncapiOverlayFiles "https://raw.githubusercontent.com/arcadia-editions/api-contract-commons/refs/heads/main/asyncapi-overlay.yml"
             targetFile "./asyncapi.yml"
         }
         ZDLToAsyncAPIClientPlugin {
             id "urn:com.arcadiaeditions:fulfillment:shipping:asyncapi:client"
+            applicationExtensions """
+            x-application-bindings:
+              x-principal: fulfillment_shipping
+              x-clientId: fulfillment_shipping
+              x-groupId: fulfillment_shipping
+            """
             title "Arcadia Editions - Fulfillment Shipping - AsyncAPI Client"
+            asyncapiOverlayFiles "https://raw.githubusercontent.com/arcadia-editions/api-contract-commons/refs/heads/main/asyncapi-client-overlay.yml"
             targetFile "./asyncapi-client.yml"
         }
         /** Generates an OpenAPI 3.0 specification from this ZDL model. */

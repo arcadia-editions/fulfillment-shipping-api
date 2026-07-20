@@ -1,21 +1,37 @@
 asyncapi: 3.0.0
 id: urn:com.arcadiaeditions:fulfillment:shipping:asyncapi:client
+
 info:
-  title: "Arcadia Editions - Fulfillment Shipping - AsyncAPI Client"
+  title: Arcadia Editions - Fulfillment Shipping - AsyncAPI Client
   version: 1.0.0
-  description: "Consumed AsyncAPI channels for Arcadia Editions - Fulfillment Shipping."
+  description: Consumed AsyncAPI channels for Arcadia Editions - Fulfillment Shipping.
+
+x-application-bindings:
+  x-principal: fulfillment_shipping
+  x-clientId: fulfillment_shipping
+  x-groupId: fulfillment_shipping
 
 channels:
-
   order-confirmed-event-v1:
-    $ref: 'https://raw.githubusercontent.com/arcadia-editions/orders-checkout-api/main/asyncapi.yml#/channels/order-confirmed-event-v1'
-
-
+    $ref: https://raw.githubusercontent.com/arcadia-editions/orders-checkout-api/main/asyncapi.yml#/channels/order-confirmed-event-v1
 
 operations:
-
   onOrderConfirmedEventV1:
     action: receive
     channel:
-      $ref: '#/channels/order-confirmed-event-v1'
+      $ref: "#/channels/order-confirmed-event-v1"
+    traits:
+    - $ref: "#/components/operationTraits/clientIdAndPrincipal"
 
+components:
+  messageTraits:
+    CommonHeaders:
+      $ref: https://raw.githubusercontent.com/arcadia-editions/api-contract-commons/refs/heads/main/asyncapi-message-traits.yml#/components/messageTraits/CommonHeaders
+  operationTraits:
+    clientIdAndPrincipal:
+      bindings:
+        kafka:
+          x-principal:
+            $ref: "#/x-application-bindings/x-principal"
+          x-groupId:
+            $ref: "#/x-application-bindings/x-groupId"
