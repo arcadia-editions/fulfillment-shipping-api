@@ -3,7 +3,7 @@ id: urn:com.arcadiaeditions:fulfillment:shipping:asyncapi
 
 info:
   title: Arcadia Editions - Fulfillment Shipping
-  version: 0.0.1
+  version: "0.0.0"
   tags:
   - name: Default
   - name: FulfillmentShipping

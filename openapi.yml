@@ -1,7 +1,7 @@
 openapi: 3.0.1
 info:
   title: "Arcadia Editions - Fulfillment Shipping"
-  version: 0.0.1
+  version: "0.0.0"
   description: "Arcadia Editions - Fulfillment Shipping"
   contact:
     email: email@domain.com

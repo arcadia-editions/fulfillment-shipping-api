@@ -3,7 +3,7 @@ id: urn:com.arcadiaeditions:fulfillment:shipping:asyncapi:client
 
 info:
   title: Arcadia Editions - Fulfillment Shipping - AsyncAPI Client
-  version: 0.1.0
+  version: "0.0.0"
   description: Consumed AsyncAPI channels for Arcadia Editions - Fulfillment Shipping.
 
 x-application-bindings:
