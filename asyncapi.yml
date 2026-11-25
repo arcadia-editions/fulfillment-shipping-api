@@ -3,7 +3,7 @@ id: urn:com.arcadiaeditions:fulfillment:shipping:asyncapi
 
 info:
   title: Arcadia Editions - Fulfillment Shipping
-  version: "0.1.0"
+  version: 0.1.0
   tags:
   - name: Default
   - name: FulfillmentShipping
@@ -47,6 +47,15 @@ channels:
     - $ref: https://raw.githubusercontent.com/arcadia-editions/api-contract-commons/refs/heads/main/asyncapi-channel-traits.yml#/components/channelTraits/kafkaTopicS
     - $ref: https://raw.githubusercontent.com/arcadia-editions/api-contract-commons/refs/heads/main/asyncapi-channel-traits.yml#/components/channelTraits/kafkaTopicRetained
     x-visibility: global
+  fulfillment-cancelled-event-v1:
+    address: fulfillment-shipping.fulfillment-cancelled.event.avro.v1
+    messages:
+      FulfillmentCancelledEvent:
+        $ref: "#/components/messages/FulfillmentCancelledEvent"
+    x-traits:
+    - $ref: https://raw.githubusercontent.com/arcadia-editions/api-contract-commons/refs/heads/main/asyncapi-channel-traits.yml#/components/channelTraits/kafkaTopicS
+    - $ref: https://raw.githubusercontent.com/arcadia-editions/api-contract-commons/refs/heads/main/asyncapi-channel-traits.yml#/components/channelTraits/kafkaTopicRetained
+    x-visibility: global
 
 operations:
   onFulfillmentScheduled:
@@ -71,6 +80,14 @@ operations:
     - name: FulfillmentShipping
     channel:
       $ref: "#/channels/fulfillment-ready-to-ship-event-v1"
+    traits:
+    - $ref: "#/components/operationTraits/clientIdAndPrincipal"
+  onFulfillmentCancelled:
+    action: send
+    tags:
+    - name: FulfillmentShipping
+    channel:
+      $ref: "#/channels/fulfillment-cancelled-event-v1"
     traits:
     - $ref: "#/components/operationTraits/clientIdAndPrincipal"
 
@@ -106,6 +123,16 @@ components:
         schemaFormat: application/vnd.apache.avro+json;version=1.9.0
         schema:
           $ref: avro/FulfillmentReadyToShip.avsc
+    FulfillmentCancelledEvent:
+      name: FulfillmentCancelledEvent
+      title: Published for the warehouse; no step of place-order-flow consumes it.
+      summary: Published for the warehouse; no step of place-order-flow consumes it.
+      traits:
+      - $ref: "#/components/messageTraits/CommonHeaders"
+      payload:
+        schemaFormat: application/vnd.apache.avro+json;version=1.9.0
+        schema:
+          $ref: avro/FulfillmentCancelled.avsc
   messageTraits:
     CommonHeaders:
       $ref: https://raw.githubusercontent.com/arcadia-editions/api-contract-commons/refs/heads/main/asyncapi-message-traits.yml#/components/messageTraits/CommonHeaders

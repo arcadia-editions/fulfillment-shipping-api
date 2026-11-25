@@ -3,7 +3,7 @@ id: urn:com.arcadiaeditions:fulfillment:shipping:asyncapi:client
 
 info:
   title: Arcadia Editions - Fulfillment Shipping - AsyncAPI Client
-  version: "0.1.0"
+  version: 0.1.0
   description: Consumed AsyncAPI channels for Arcadia Editions - Fulfillment Shipping.
 
 x-application-bindings:
@@ -14,12 +14,54 @@ x-application-bindings:
 channels:
   order-confirmed-event-v1:
     $ref: https://raw.githubusercontent.com/arcadia-editions/orders-checkout-api/main/asyncapi.yml#/channels/order-confirmed-event-v1
+  order-cancelled-event-v1:
+    $ref: https://raw.githubusercontent.com/arcadia-editions/orders-checkout-api/main/asyncapi.yml#/channels/order-cancelled-event-v1
+  payment-captured-event-v1:
+    $ref: https://raw.githubusercontent.com/arcadia-editions/payments-processing-api/main/asyncapi.yml#/channels/payment-captured-event-v1
 
 operations:
   onOrderConfirmedEventV1:
     action: receive
     channel:
       $ref: "#/channels/order-confirmed-event-v1"
+    traits:
+    - $ref: "#/components/operationTraits/clientIdAndPrincipal"
+    bindings:
+      kafka:
+        x-error-topics:
+          addressTemplate: "${groupId}.__.${channel.address}.${suffix}"
+          retryTopics: 3
+          retrySuffixes:
+          - retry-5s
+          - retry-30s
+          - retry-5m
+          retry:
+            $ref: https://raw.githubusercontent.com/arcadia-editions/api-contract-commons/refs/heads/main/asyncapi-error-topics.yml#/components/error-topics/retry/silver
+          dlq:
+            $ref: https://raw.githubusercontent.com/arcadia-editions/api-contract-commons/refs/heads/main/asyncapi-error-topics.yml#/components/error-topics/dlq/compliance
+  onOrderCancelledEventV1:
+    action: receive
+    channel:
+      $ref: "#/channels/order-cancelled-event-v1"
+    traits:
+    - $ref: "#/components/operationTraits/clientIdAndPrincipal"
+    bindings:
+      kafka:
+        x-error-topics:
+          addressTemplate: "${groupId}.__.${channel.address}.${suffix}"
+          retryTopics: 3
+          retrySuffixes:
+          - retry-5s
+          - retry-30s
+          - retry-5m
+          retry:
+            $ref: https://raw.githubusercontent.com/arcadia-editions/api-contract-commons/refs/heads/main/asyncapi-error-topics.yml#/components/error-topics/retry/silver
+          dlq:
+            $ref: https://raw.githubusercontent.com/arcadia-editions/api-contract-commons/refs/heads/main/asyncapi-error-topics.yml#/components/error-topics/dlq/compliance
+  onPaymentCapturedEventV1:
+    action: receive
+    channel:
+      $ref: "#/channels/payment-captured-event-v1"
     traits:
     - $ref: "#/components/operationTraits/clientIdAndPrincipal"
     bindings:
